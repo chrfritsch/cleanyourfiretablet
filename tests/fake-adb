@@ -1,0 +1,86 @@
+#!/usr/bin/env bash
+# Fake adb for tests: a pretend tablet whose state lives in $FAKE (packages, settings, props, home).
+# Only the commands tools/ sends are answered; anything else fails loudly.
+set -uf
+case "${1:-}" in
+  get-state) echo device; exit 0;;
+  get-serialno) echo adb-FAKE123-x._adb-tls-connect._tcp; exit 0;;  # what Wi-Fi ADB answers
+  shell) shift;;
+  install|install-multiple) echo "$*" >> "$FAKE/log"; case "$*" in *bad*) echo "Failure [INSTALL_FAILED_OLDER_SDK]";; *) echo Success;; esac; exit 0;;
+  *) echo "fake adb: unsupported: $*" >&2; exit 1;;
+esac
+echo "$*" >> "$FAKE/log"
+# shellcheck disable=SC2048,SC2086  # the tablet's shell splits the joined command the same way
+set -- $*
+
+setpkg() { awk -v p="$1" -v s="$2" '$1==p{$2=s}1' "$FAKE/packages" > "$FAKE/p.tmp" && mv "$FAKE/p.tmp" "$FAKE/packages"; }
+delsetting() { awk -v n="$1" -v k="$2" '!($1==n && $2==k)' "$FAKE/settings" > "$FAKE/s.tmp" && mv "$FAKE/s.tmp" "$FAKE/settings"; }
+installed() { awk -v p="$1" '$1==p{f=1} END{exit !f}' "$FAKE/packages"; }
+
+case "$1 ${2:-}" in
+  "pm list")
+    case "${4:-}" in
+      -e) awk '$2=="enabled"{print "package:"$1}' "$FAKE/packages";;
+      -d) awk '$2=="disabled"{print "package:"$1}' "$FAKE/packages";;
+      *)  awk '{print "package:"$1}' "$FAKE/packages";;
+    esac;;
+  "pm disable-user")
+    p=$5
+    # The restore record must name a package before it is touched.
+    grep -qxF "$p" "$FAKE_RECORD" 2>/dev/null || echo "$p" >> "$FAKE/violations"
+    installed "$p" || { echo "Error: package $p not found"; exit 1; }
+    grep -qxF "$p" "$FAKE/protected" && { echo "Error: java.lang.SecurityException: Cannot disable a protected package: $p"; exit 1; }
+    setpkg "$p" disabled; echo "Package $p new state: disabled-user";;
+  "pm enable")
+    p=$5; installed "$p" || { echo "Error: package $p not found"; exit 1; }
+    setpkg "$p" enabled; echo "Package $p new state: enabled";;
+  "pm path")
+    installed "$3" && echo "package:/system/app/$3.apk";;
+  "getprop "*)
+    if [ -n "${2:-}" ]; then awk -v k="$2" '$1==k{print $2}' "$FAKE/props"
+    else awk '{print "["$1"]: ["$2"]"}' "$FAKE/props"; fi;;
+  "settings list")
+    awk -v n="$3" '$1==n{print $2"="$3}' "$FAKE/settings";;
+  "settings get")
+    awk -v n="$3" -v k="$4" '$1==n && $2==k{print $3; f=1} END{if(!f) print "null"}' "$FAKE/settings";;
+  "settings put")
+    v=${5#\'}; v=${v%\'}; delsetting "$3" "$4"; echo "$3 $4 $v" >> "$FAKE/settings";;
+  "settings delete")
+    delsetting "$3" "$4"; echo "Deleted 1 rows";;
+  "ime enable")
+    installed "${3%%/*}" || { echo "Unknown input method $3"; exit 1; }
+    e=$(awk '$1=="secure" && $2=="enabled_input_methods"{print $3}' "$FAKE/settings")
+    delsetting secure enabled_input_methods; echo "secure enabled_input_methods ${e:+$e:}$3" >> "$FAKE/settings"
+    echo "Input method $3: now enabled";;
+  "ime set")
+    delsetting secure default_input_method; echo "secure default_input_method $3" >> "$FAKE/settings"
+    echo "Input method $3 selected for user #0";;
+  "am start")
+    echo "Starting: Intent { $* }";;
+  "cmd role")
+    case "$3" in
+      add-role-holder) echo "$5" > "$FAKE/browser";;
+    esac;;
+  "dumpsys role")
+    echo "name=android.app.role.BROWSER"
+    echo "holders=$(cat "$FAKE/browser" 2>/dev/null)";;
+  "cmd appops")
+    p=$4
+    case "$3" in
+      get)
+        mode=$(awk -v p="$p" '$1==p{print $2}' "$FAKE/appops" 2>/dev/null)
+        if [ -n "$mode" ]; then echo "$5: $mode"; else echo "No operations."; echo "Default mode: allow"; fi;;
+      set)
+        mode=$6
+        awk -v p="$p" '$1!=p' "$FAKE/appops" 2>/dev/null > "$FAKE/a.tmp" || true
+        mv "$FAKE/a.tmp" "$FAKE/appops" 2>/dev/null || :
+        [ "$mode" = allow ] || echo "$p $mode" >> "$FAKE/appops";;
+    esac;;
+  "cmd package")
+    echo "priority=0 preferredOrder=0 match=0x108000 specificIndex=-1 isDefault=true"
+    case "$*" in
+      *category.HOME*) echo "$(cat "$FAKE/home")/.Launcher";;
+      *android.settings.SETTINGS*) echo "com.example.settings/.Settings";;
+    esac;;
+  *) echo "fake adb: unsupported shell command: $*" >&2; exit 1;;
+esac

@@ -1,0 +1,39 @@
+name: Tested my tablet
+description: Report a Fire tablet you cleaned, so its list can be added to examples/
+title: "Tested: <model> on Fire OS <version>"
+labels: [tested-tablet]
+body:
+  - type: input
+    id: model
+    attributes:
+      label: Model and generation
+      placeholder: Fire HD 10 (11th gen, 2021)
+    validations: {required: true}
+  - type: textarea
+    id: props
+    attributes:
+      label: Device info
+      description: Output of `adb shell getprop | grep -E "ro.product.model|ro.build.mktg.fireos|ro.build.version.(sdk|incremental)|ro.product.cpu.abilist"`
+      render: text
+    validations: {required: true}
+  - type: textarea
+    id: list
+    attributes:
+      label: The debloat.txt you applied
+      render: text
+    validations: {required: true}
+  - type: textarea
+    id: failed
+    attributes:
+      label: Packages that failed (protected) or that you had to re-enable, and why
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checks
+      options:
+        - label: Survived a reboot with every package still disabled
+          required: true
+        - label: Home, Settings and Wi-Fi work
+          required: true
+        - label: Google Play installed and signed in (tools/gplay.sh)
+        - label: Lockscreen ads gone

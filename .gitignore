@@ -1,0 +1,10 @@
+backup/
+gapps/
+*.apk
+*.apkm
+*.apks
+*.xapk
+shots/
+.DS_Store
+downloads/
+apps/

@@ -1,0 +1,16 @@
+name: test
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  test:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]  # macOS: the stock bash 3.2 most users run
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - run: /bin/bash tests/test_tools.sh
+      - run: /bin/bash tests/test_device.sh
+      - if: runner.os == 'Linux'
+        run: shellcheck -x -s bash tools/*.sh tests/*.sh tests/fake-adb

@@ -1,0 +1,6 @@
+# SHA-256 of Google APKs known to work. tools/gplay.sh installs a file listed here, or any file signed by Google
+# (checked with apksigner). Google's files are not shipped in this repo: download them yourself (README).
+# Format: <sha256>  <file name>   # what it is, where it was tested
+3bc2457f037a011f85fbc32e182e0fb689bd0d789fb6b990f0cf103385ef6feb  com.android.vending_53.7.24-24_0_PR_1001202308-85372400_minAPI24(arm64-v8a,armeabi-v7a,x86,x86_64)(nodpi)_apkmirror.com.apk  # Play Store 53.7.24-24, Fire HD 10 13th gen, Fire OS 8.3.3.8
+4791e3439001271fc6e5064c7c4ab4142f794576967f1f2e4a9982e05d0394a9  com.google.android.gms_26.43.30_(150400-1006944126)-264330022_minAPI30(arm64-v8a,armeabi-v7a)(nodpi)_apkmirror.com.apk  # Play services 26.43.30 (150400), same tablet
+32156365bcff60f2a0576abe1f15ef7e2b705aea9536bfcbd6fef784d131ccb5  com.google.android.gsf_10-6494331-29_minAPI29(nodpi)_apkmirror.com.apk  # Services Framework 10-6494331 (Android 10+), same tablet

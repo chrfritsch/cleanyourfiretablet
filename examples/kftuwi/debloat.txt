@@ -1,0 +1,57 @@
+# Amazon Fire HD 10 (13th gen, 2023), KFTUWI (tungsten), Fire OS 8.3.3.8 (RS8338.3344N), Android 11, SDK 30,
+# arm64-v8a. Tested 2026-11-02 on the owner's tablet: 3 batches, a screenshot and an app check after each, then
+# a reboot. Result: 19 of 28 packages disabled and still disabled after the reboot; the other 9 are protected.
+# Home, Settings, Wi-Fi, Kindle, Prime Video, Amazon Music and Audible worked after every batch and the reboot.
+# Started from examples/fire-hd-10/; 20 packages of that list are not on Fire OS 8.3 and were dropped.
+#
+# Apply:   tools/disable.sh examples/kftuwi/debloat.txt
+# Undo:    tools/restore.sh
+# Kept on purpose by this owner: Kindle, Prime Video, Amazon Music, Audible, Photos, Appstore, Alexa,
+# Amazon Kids (a kids profile is in use), OTA updates.
+#
+# Protected on this build (commented out below) and what is not solved: docs/devices/kftuwi.md
+# Status: 2026-11-02, one tablet, lived with for a day; 2 other profiles were not cleaned.
+
+# --- Batch 1: ads and promos ---
+# com.amazon.kindle.kso                   # Special Offers: lockscreen ads
+com.amazon.firespotlight                # Appstore "Spotlight" promos
+com.amazon.hybridadidservice            # Advertising ID service
+com.amazon.advertisingidsettings        # Advertising ID settings page
+com.amazon.sneakpeek                    # promo previews (new on Fire OS 8)
+com.amazon.cx_offline                   # retail demo experience (com.amazon.demo.cx_core)
+com.amazon.hedwig                       # Fire TV Channels
+
+# --- Batch 2: telemetry ---
+# com.amazon.client.metrics
+com.amazon.client.metrics.api
+# com.amazon.device.metrics
+# com.amazon.platform                     # Amazon metrics service
+com.amazon.wirelessmetrics.service
+com.amazon.dp.logger
+# com.fireos.usagestats.proxy
+# com.fireos.arcus.proxy                  # remote config client
+com.amazon.shpm                         # ship mode
+
+# --- Batch 3: apps this owner doesn't use ---
+com.amazon.windowshop                   # Amazon Shopping
+com.amazon.weather
+com.amazon.imdb.tv.mobile.app           # Freevee
+com.kingsoft.office.amz                 # WPS Office
+# com.amazon.csapp                        # Help app
+com.amazon.ods.kindleconnect            # Mayday screen sharing (remote help)
+com.amazon.connectivitydiag             # diagnostics; check Wi-Fi after this batch
+com.amazon.tablet.generative.wallpaper  # AI wallpapers
+# com.amazon.whisperlink.core.android     # casting / second screen to Fire TV
+
+# --- Batch 4: background sync (from Fire Tools' list) ---
+com.amazon.alta.h2clientservice         # Profiles/household client
+com.amazon.dp.contacts                  # contact sync adapter
+# com.amazon.diode                        # protected
+
+# --- Kept by this owner ---
+# com.amazon.kindle  com.amazon.avod  com.amazon.mp3  com.audible.application.kindle  com.amazon.photos
+# com.amazon.venezia (Appstore)  com.amazon.tahoe com.amazon.parentalcontrols com.amazon.pm (Kids)
+# Alexa: com.amazon.dee.app com.amazon.dee.alexaonandroidos com.amazon.tablet.voiceassistant com.amazon.afe.app
+#        com.amazon.comms.kids com.amazon.tcomm com.amazon.tcomm.client com.amazon.tcomm.jackson
+#        amazon.speech.davs.davcservice
+# OTA: com.amazon.device.software.ota com.amazon.device.software.ota.override com.amazon.kindle.otter.oobe.forced.ota

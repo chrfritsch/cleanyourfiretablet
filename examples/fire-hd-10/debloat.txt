@@ -1,0 +1,98 @@
+# Amazon Fire HD 10 (11th gen 2021 / 13th gen 2023), Fire OS 7 or 8. STARTER LIST, NOT YET TESTED ON A DEVICE.
+# The 13th gen (KFTUWI, Fire OS 8.3.3.8) has a tested list: examples/kftuwi. 20 packages below are not on Fire OS 8.3.
+# Package names come from Fire Tools (github.com/mrhaydendp/Fire-Tools, MIT), sorted into tiers here.
+# Once tested, copy it to examples/<model-code>/ and put the model, Fire OS build and date in this header.
+#
+# Apply:   tools/disable.sh examples/fire-hd-10/debloat.txt
+# Undo:    tools/restore.sh
+# Everything is DISABLED for user 0, never uninstalled or cleared. Comment out a line to keep that app.
+# Packages missing on your build are skipped. Protected ones show "FAILED"; that is harmless.
+
+# --- Ads and promos ---
+com.amazon.kindle.kso                   # Special Offers: lockscreen ads (Amazon may still show them, see README)
+com.amazon.firespotlight                # Appstore "Spotlight" promos
+com.amazon.device.sale.service          # Sale notifications
+com.amazon.readynowcore                 # On Deck: auto-downloads promoted videos
+com.amazon.hybridadidservice            # Advertising ID service
+com.amazon.advertisingidsettings        # Advertising ID settings page (privacy.sh sets limit_ad_tracking anyway)
+com.android.protips                     # Home screen tips
+
+# --- Telemetry ---
+com.amazon.client.metrics
+com.amazon.client.metrics.api
+com.amazon.device.metrics               # protected on most builds
+com.amazon.platform                     # Amazon metrics service
+com.amazon.wirelessmetrics.service
+com.amazon.dp.logger
+com.amazon.minerva.client.api           # metrics client
+com.fireos.usagestats.proxy             # protected on most builds
+com.amazon.nimh                         # Arcus remote config client
+com.fireos.arcus.proxy
+com.amazon.kor.demo                     # retail store demo mode
+com.amazon.shpm                         # ship mode
+
+# --- Alexa (comment out the block if you use Alexa). tcomm is shared Amazon messaging: if Kindle or
+# the Appstore misbehave after this batch, re-enable the three tcomm packages first ---
+amazon.speech.sim
+amazon.jackson19
+com.amazon.dee.app
+com.amazon.dee.alexaonandroidos
+com.amazon.tablet.voiceassistant
+com.amazon.alexa.multimodal.gemini
+com.amazon.afe.app                      # Tap to Alexa
+com.amazon.alexa.youtube.app
+com.amazon.cardinal                     # Alexa video player
+com.amazon.smartgenie                   # Alexa device dashboard
+com.amazon.comms.kids                   # Alexa calling
+com.amazon.tcomm
+com.amazon.tcomm.client
+com.amazon.tcomm.jackson
+
+# --- Amazon apps: ask the owner, keep any they use ---
+com.amazon.windowshop                   # Amazon Shopping
+com.amazon.webapp                       # Kindle Store
+com.amazon.iris                         # News
+com.amazon.weather
+com.amazon.bioscope                     # Amazon VideoStore
+com.amazon.imdb.tv.mobile.app           # Freevee
+com.amazon.kindle.personal_video        # My Videos
+com.amazon.recess
+com.amazon.ags.app                      # GameCircle
+com.amazon.zico                         # Documents
+com.kingsoft.office.amz                 # WPS Office
+com.goodreads.kindle
+com.amazon.csapp                        # Help app
+com.amazon.ods.kindleconnect            # Mayday screen sharing (remote help)
+com.amazon.connectivitydiag             # diagnostics; check Wi-Fi still connects after this batch
+# com.amazon.kindle                     # Kindle books
+# com.amazon.avod                       # Prime Video
+# com.amazon.mp3                        # Amazon Music
+# com.audible.application.kindle        # Audible
+# com.amazon.photos                     # Amazon Photos (with com.amazon.photos.importer)
+# com.amazon.photos.importer
+# com.amazon.kindle.unifiedSearch       # search bar of the Fire Launcher
+# com.amazon.geo.client.maps            # Amazon Maps (the geo.mapsv* APIs are used by some Appstore apps)
+
+# --- Left on by default: these break something. Uncomment only with a reason ---
+# com.amazon.kindle.otter.oobe          # setup wizard; disabled, Date & time settings stop opening. Set timezone first
+# com.amazon.device.software.ota        # OTA updates. Off = no security fixes, but updates can undo this debloat
+# com.amazon.device.software.ota.override
+# com.amazon.kindle.otter.oobe.forced.ota
+# com.amazon.venezia                    # Appstore; also license checks for apps bought there
+# com.amazon.device.messaging           # push notifications for Appstore apps
+# com.amazon.imp                        # Amazon sign-in; Kindle, Prime Video and Appstore need it
+# com.amazon.identity.auth.device.authorization
+# com.amazon.dcp                        # device middleware behind the Amazon account
+# com.amazon.tahoe                      # Amazon Kids / Kids profiles
+# com.amazon.parentalcontrols
+# com.amazon.pm                         # parental monitoring
+# com.amazon.h2settingsfortablet        # profiles and Family Library
+# com.amazon.device.sync                # Whispersync: Kindle reading position, game saves
+# com.amazon.sync.service
+# com.amazon.kindle.rdmdeviceadmin      # remote management: lock or wipe a lost tablet from your Amazon account
+# com.amazon.logan                      # VoiceView screen reader (accessibility)
+# com.amazon.speakscreen                # Speak Selection (accessibility)
+# com.amazon.whisperlink.core.android   # casting and second screen to Fire TV
+# com.here.odnp.service                 # HERE positioning; disabling hurts location
+# com.amazon.platform.fdra              # factory reset allowlist
+# com.amazon.cloud9.systembrowserprovider # Silk provider, role unclear
